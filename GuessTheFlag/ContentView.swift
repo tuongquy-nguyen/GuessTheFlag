@@ -14,14 +14,17 @@ struct ContentView: View {
     
     @State private var correctAnswer = Int.random(in: 0..<3)
     @State private var showingScore = false
+    @State private var showingFinalScore = false
     @State private var scoreTilte = ""
     @State private var score = 0
+    @State private var userChoice = ""
+    @State private var playCount = 0
     
     var body: some View {
         ZStack {
             RadialGradient(stops:[
                 .init(color: Color(red: 0.1, green: 0.2, blue: 0.45), location: 0.3),
-                .init(color: Color(red: 0.76, green: 0.15, blue: 0.26), location: 0.3)
+                .init(color: Color(red: 0.78, green: 0.40, blue: 0.26), location: 0.3)
             ], center: .top, startRadius: 200, endRadius: 700)
                 .ignoresSafeArea()
             
@@ -71,12 +74,26 @@ struct ContentView: View {
                     askQuestion()
                 }
             } message: {
-                Text("Your score is: \(score)")
+                if scoreTilte == "Correct" {
+                    Text("Your score has been increased to: \(score)")
+                }
+                else {
+                    Text("Wrong! That's the flag of \(userChoice)")
+                }
+            }
+            
+            .alert(Text("Game Over"), isPresented: $showingFinalScore) {
+                Button("Restart the game") {
+                    reset()
+                }
+            } message: {
+                Text("The test is done! Your final score is: \(score)")
             }
         }
     }
     
     func flaggTapped(_ number: Int) {
+        playCount += 1
         if number == correctAnswer {
             scoreTilte = "Correct"
             score += 1
@@ -87,15 +104,27 @@ struct ContentView: View {
             else {
                 score -= 1
             }
-            scoreTilte = "Wrong"
+            scoreTilte = "Oops!"
         }
         showingScore = true
+        
+        if playCount >= 8 {
+            showingFinalScore = true
+        }
+        userChoice = contries[number]
     }
     
     func askQuestion() {
         contries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
+    
+    func reset() {
+        score = 0
+        playCount = 0
+        askQuestion()
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
