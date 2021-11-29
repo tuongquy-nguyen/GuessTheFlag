@@ -18,6 +18,32 @@ struct FlagImage: View {
     }
 }
 
+struct myPro: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.largeTitle.weight(.bold))
+            .foregroundStyle(.white)
+    }
+}
+
+struct Title: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.title3.weight(.semibold))
+            .foregroundStyle(.ultraThinMaterial)
+    }
+}
+
+extension View {
+    func proStyle() -> some View {
+        modifier(myPro())
+    }
+    
+    func titleStyle() -> some View {
+        modifier(Title())
+    }
+}
+
 struct ContentView: View {
     
     @State private var contries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"]
@@ -42,8 +68,7 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 Text("Guess The Flag")
-                    .font(.largeTitle.bold())
-                    .foregroundColor(.white)
+                    .proStyle()
                 
                 Spacer()
                 VStack(spacing: 30) {
