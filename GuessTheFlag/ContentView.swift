@@ -56,6 +56,9 @@ struct ContentView: View {
     @State private var score = 0
     @State private var userChoice = ""
     @State private var playCount = 0
+    @State private var rotateAmount = 0.0
+    @State private var selectedFlag = -1
+    
     
     var body: some View {
         ZStack {
@@ -81,12 +84,17 @@ struct ContentView: View {
                             .foregroundStyle(.primary)
                     }
                     
-                    ForEach(0..<3) {number in
+                    ForEach(0..<3) { number in
                         Button {
                             flaggTapped(number)
                         } label: {
                             FlagImage(imageName: contries[number])
                         }
+                        .opacity(selectedFlag == -1 || selectedFlag == number ? 1 : 0.25)
+                        .scaleEffect(selectedFlag == -1 || selectedFlag == number ? 1 : 0.8)
+                        .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0), axis: (x: 0, y: 1, z: 0))
+                        .animation(.default, value: selectedFlag)
+                        
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -126,6 +134,7 @@ struct ContentView: View {
     }
     
     func flaggTapped(_ number: Int) {
+        selectedFlag = number
         playCount += 1
         if number == correctAnswer {
             scoreTilte = "Correct"
@@ -150,6 +159,7 @@ struct ContentView: View {
     func askQuestion() {
         contries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        selectedFlag = -1
     }
     
     func reset() {
